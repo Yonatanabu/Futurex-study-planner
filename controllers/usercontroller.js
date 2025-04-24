@@ -1,4 +1,6 @@
 const UserProfile = require('../models/UserProfile');
+const winston = require('winston');
+require('winston-mongodb');
 
 // Create a new user profile during onboarding
 exports.onboardUser = async (req, res) => {
@@ -66,6 +68,7 @@ exports.onboardUser = async (req, res) => {
     res.status(201).json({ message: 'User onboarded successfully', userProfile });
     
   } catch (error) {
+    logger.error('Error: '+ error);
     console.error('Error in onboardUser:', error);
     res.status(500).json({ message: 'Server error' });
   }
@@ -91,6 +94,7 @@ exports.updateUserProfile = async (req, res) => {
     res.status(200).json({ message: 'User profile updated successfully', updatedProfile });
   } catch (err) {
     // Handle any errors, such as validation errors or other issues
+    logger.error('Error: '+ error);
     res.status(500).json({ error: err.message });
   }
 };

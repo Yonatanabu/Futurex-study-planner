@@ -1,5 +1,9 @@
 const Subject = require('../models/Subject');
 const StudyPlan = require('../models/StudyPlan');
+const logger = require('../logger');
+const winston = require('winston');
+require('winston-mongodb');
+
 // Controller to create a study plan for a specific day
 exports.createStudyPlan = async (req, res) => {
   const { date, plan } = req.body;
@@ -10,6 +14,7 @@ exports.createStudyPlan = async (req, res) => {
     res.status(201).json({ message: 'Study plan created successfully!' });
   } catch (error) {
     res.status(500).json({ message: 'Error creating study plan', error });
+     logger.error('Error: '+ e);
   }
 };
 

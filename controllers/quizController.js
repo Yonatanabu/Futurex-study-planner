@@ -1,5 +1,7 @@
 const Quiz = require('../models/Quiz');
 const Subject = require('../models/Subject');
+const winston = require('winston');
+require('winston-mongodb');
 
 exports.createQuiz = async (req, res) => {
   try {
@@ -12,6 +14,7 @@ exports.createQuiz = async (req, res) => {
     }
     if (!chapter) {
       return res.status(400).json({ error: "Chapter is required" });
+     
     }
     const quiz = new Quiz({ title, subjectId, grade, chapter,questions,explanation});
     await quiz.save();
@@ -19,6 +22,7 @@ exports.createQuiz = async (req, res) => {
     res.status(201).json({ message: "Quiz created successfully", quiz });
   } catch (error) {
     res.status(500).json({ error: error.message });
+     logger.error('Error: '+ error);
   }
 };
 exports.getQuizzes = async (req, res) => {
@@ -43,6 +47,7 @@ exports.getQuizzes = async (req, res) => {
     })));
     res.send(JSON.stringify(formattedQuestions));
   } catch (err) {
+    logger.error('Error: '+ error);
     res.status(500).json({ error: err.message });
   }
 };

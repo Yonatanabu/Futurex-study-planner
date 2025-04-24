@@ -7,6 +7,7 @@ const studyPlanRoutes = require('./routes/studyPlanRoutes');
 const quizRoutes=require('./routes/quizRoutes');
 dotenv.config();
 const app = express();
+require('dotenv').config();
 
 app.use(express.json());
 connectDB();  // Ensure DB is connected
