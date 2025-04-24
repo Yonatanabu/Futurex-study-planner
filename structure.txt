@@ -1,0 +1,30 @@
+study-planner-backend/
+│
+├── config/
+│   └── db.js                    # MongoDB connection setup
+│
+├── controllers/
+│   ├── userController.js         # Handles user-related API logic
+│   ├── studyPlanController.js    # Handles study plan-related logic
+│   └── analysisController.js     # Handles data analysis logic
+│
+├── models/
+│   ├── UserProfile.js            # UserProfile model (schema)
+│   ├── AnalysisResults.js        # AnalysisResults model (schema)
+│   └── StudyPlan.js              # StudyPlan model (schema)
+│
+├── routes/
+│   ├── userRoutes.js             # Routes for user-related endpoints
+│   ├── studyPlanRoutes.js        # Routes for study plan-related endpoints
+│   └── analysisRoutes.js         # Routes for analysis-related endpoints
+│
+├── middleware/
+│   └── errorMiddleware.js        # Custom error handling middleware
+│
+├── utils/
+│   └── helpers.js                # Helper functions (e.g., validation, date formatting)
+│
+├── .env                          # Environment variables (e.g., MongoDB URI, app port)
+├── package.json                  # Dependencies and scripts
+├── server.js                     # Main server entry point
+└── README.md                     # Project overview
