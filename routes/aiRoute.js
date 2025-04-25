@@ -16,55 +16,45 @@ const validateApiKey = (req, res, next) => {
 };
 
 router.post("/chat", validateApiKey, async (req, res) => {
-  console.log(OPENROUTER_API_KEY);
   try {
     const { messages, model } = req.body;
 
+    // Validate input
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    const requestBody = {
-      model: model || DEFAULT_MODEL,
-      messages,
+    // Define your system prompt (instructions for the AI)
+    const systemPrompt = {
+      role: "system",  // OpenRouter supports "system" role for instructions
+      content: `You are a helpful assistant for MyApp called futurex.
+       whih help student to plan their study,give resource and motivate students.
+        Be concise and friendly.`
     };
 
+    // Prepend system prompt to user messages
+    const updatedMessages = [systemPrompt, ...messages];
 
-    messages[0]['content'].append(`
-      
-      `);
+    const requestBody = {
+      model: model || DEFAULT_MODEL,
+      messages: updatedMessages,  // Use the modified array
+    };
 
-    const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-          "HTTP-Referer": req.headers.referer || "https://your-site.com", // Fallback if no referer
-          "X-Title": "Your App Name", // Default title
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        "HTTP-Referer": req.headers.referer || "https://your-site.com",
+        "X-Title": "Your App Name",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("OpenRouter API error:", errorData);
-      return res.status(response.status).json({
-        error: "OpenRouter API request failed",
-        details: errorData,
-      });
-    }
-
-    const data = await response.json();
-    res.json(data);
+    // ... rest of your error handling and response logic
   } catch (error) {
     console.error("Server error:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: error.message,
-    });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
