@@ -1,5 +1,5 @@
 const express = require("express");
-const fetch = import("node-fetch");
+const fetch = require('node-fetch');
 const router = express.Router();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
@@ -24,37 +24,59 @@ router.post("/chat", validateApiKey, async (req, res) => {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    // Define your system prompt (instructions for the AI)
+    // Validate each message structure
+    const isValidMessages = messages.every(
+      (msg) => msg.role && msg.content && typeof msg.content === "string"
+    );
+    if (!isValidMessages) {
+      return res.status(400).json({
+        error: "Each message must have 'role' and 'content' (string) fields",
+      });
+    }
+
+    // System prompt
     const systemPrompt = {
-      role: "system",  // OpenRouter supports "system" role for instructions
-      content: `You are a helpful assistant for MyApp called futurex.
-       whih help student to plan their study,give resource and motivate students.
-        Be concise and friendly.`
+      role: "system",
+      content: `You are a helpful assistant for FutureX, an app that helps students plan their studies, 
+      provide learning resources, and offer motivation. Be concise, friendly, and focus on educational support.`
     };
 
-    // Prepend system prompt to user messages
-    const updatedMessages = [systemPrompt, ...messages];
-
+    // Create the request payload
     const requestBody = {
       model: model || DEFAULT_MODEL,
-      messages: updatedMessages,  // Use the modified array
+      messages: [systemPrompt, ...messages],
     };
 
+    // Call OpenRouter API
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "HTTP-Referer": req.headers.referer || "https://your-site.com",
-        "X-Title": "Your App Name",
+        "HTTP-Referer": req.headers.referer || "https://futurex.app", // Update with your domain
+        "X-Title": "FutureX Study App", // Update with your app name
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
 
-    // ... rest of your error handling and response logic
+    // Handle API response
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("OpenRouter API error:", errorData);
+      return res.status(response.status).json({
+        error: "Failed to get response from AI",
+        details: errorData.error?.message || "Unknown error",
+      });
+    }
+
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     console.error("Server error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ 
+      error: "Internal server error",
+      message: error.message 
+    });
   }
 });
 
