@@ -1,5 +1,5 @@
 const express = require("express");
-const fetch = require("node-fetch");
+const fetch = import("node-fetch");
 const router = express.Router();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
