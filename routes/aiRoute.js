@@ -52,8 +52,8 @@ router.post("/chat", validateApiKey, async (req, res) => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "HTTP-Referer": req.headers.referer || "https://futurex.app", // Update with your domain
-        "X-Title": "FutureX Study App", // Update with your app name
+        // "HTTP-Referer": req.headers.referer || "https://futurex.app", // Update with your domain
+        // "X-Title": "FutureX Study App", // Update with your app name
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
