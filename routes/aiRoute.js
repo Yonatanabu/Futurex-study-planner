@@ -1,6 +1,9 @@
 const express = require("express");
 const https = require("https");
 const router = express.Router();
+const logger = require('../logger');
+const winston = require('winston');
+require('winston-mongodb');
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const DEFAULT_MODEL = "deepseek/deepseek-r1:free";
@@ -17,6 +20,7 @@ router.post("/chat", validateApiKey, async (req, res) => {
     const { messages } = req.body;
 
     if (!messages || !Array.isArray(messages)) {
+      logger.info('Error: Messages array is required');
       return res.status(400).json({ error: "Messages array is required" });
     }
 
@@ -55,13 +59,15 @@ router.post("/chat", validateApiKey, async (req, res) => {
             return res.status(429).json({ error: "Please wait a minute before trying again" });
           }
           res.json(parsedData);
-        } catch {
+        } catch(e) {
+          logger.info('Error: '+ e);
           res.status(500).json({ error: "Failed to process response" });
         }
       });
     });
 
     openRouterReq.on('error', () => {
+         logger.info('Error: Failed to connect to API ');
       res.status(500).json({ error: "Failed to connect to API" });
     });
 
@@ -69,6 +75,7 @@ router.post("/chat", validateApiKey, async (req, res) => {
     openRouterReq.end();
 
   } catch {
+    logger.info('Error: Internal server error');
     res.status(500).json({ error: "Internal server error" });
   }
 });
