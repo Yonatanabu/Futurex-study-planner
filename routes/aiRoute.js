@@ -5,38 +5,29 @@ const router = express.Router();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const DEFAULT_MODEL = "deepseek/deepseek-r1:free";
 
-// Middleware to validate API key
 const validateApiKey = (req, res, next) => {
   if (!OPENROUTER_API_KEY) {
-    return res
-      .status(500)
-      .json({ error: "Server configuration error - missing API key" });
+    return res.status(500).json({ error: "Server configuration error" });
   }
   next();
 };
 
 router.post("/chat", validateApiKey, async (req, res) => {
   try {
-    const { messages, model } = req.body;
+    const { messages } = req.body;
 
-    // Validate input
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    // Define your system prompt
     const systemPrompt = {
       role: "system",
-      content: `You are a helpful assistant for MyApp called futurex.
-       which help student to plan their study, give resource and motivate students. Be concise and friendly.`
+      content: "You are a helpful assistant for MyApp called futurex."
     };
 
-    // Prepend system prompt to user messages
-    const updatedMessages = [systemPrompt, ...messages];
-
     const requestBody = JSON.stringify({
-      model: model || DEFAULT_MODEL,
-      messages: updatedMessages,
+      model: req.body.model || DEFAULT_MODEL,
+      messages: [systemPrompt, ...messages]
     });
 
     const options = {
@@ -45,8 +36,6 @@ router.post("/chat", validateApiKey, async (req, res) => {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': req.headers.referer || 'https://your-site.com',
-        'X-Title': 'Your App Name',
         'Content-Type': 'application/json',
         'Content-Length': requestBody.length
       }
@@ -62,30 +51,24 @@ router.post("/chat", validateApiKey, async (req, res) => {
       openRouterRes.on('end', () => {
         try {
           const parsedData = JSON.parse(data);
-          if (openRouterRes.statusCode >= 400) {
-            return res.status(openRouterRes.statusCode).json({
-              error: parsedData.error?.message || 'Error from OpenRouter API',
-              details: parsedData
-            });
+          if (parsedData.error?.metadata?.raw?.includes("429")) {
+            return res.status(429).json({ error: "Please wait a minute before trying again" });
           }
           res.json(parsedData);
-        } catch (parseError) {
-          console.error("Parse error:", parseError);
-          res.status(500).json({ error: "Failed to parse API response" });
+        } catch {
+          res.status(500).json({ error: "Failed to process response" });
         }
       });
     });
 
-    openRouterReq.on('error', (error) => {
-      console.error("Request error:", error);
-      res.status(500).json({ error: "Failed to make request to OpenRouter API" });
+    openRouterReq.on('error', () => {
+      res.status(500).json({ error: "Failed to connect to API" });
     });
 
     openRouterReq.write(requestBody);
     openRouterReq.end();
 
-  } catch (error) {
-    console.error("Server error:", error);
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 });
