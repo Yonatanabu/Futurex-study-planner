@@ -67,16 +67,16 @@ router.post("/chat", validateApiKey, async (req, res) => {
     });
 
     openRouterReq.on('error', () => {
-         logger.info('Error: Failed to connect to API ');
+      logger.info('Error: Failed to connect to API ');
       res.status(500).json({ error: "Failed to connect to API" });
     });
 
     openRouterReq.write(requestBody);
     openRouterReq.end();
 
-  } catch {
-    logger.info('Error: Internal server error');
-    res.status(500).json({ error: "Internal server error" });
+  } catch(e) {
+    logger.info('Error: Internal server error',+ e);
+    res.status(500).json({ error: `Internal server error ${e}` });
   }
 });
 
