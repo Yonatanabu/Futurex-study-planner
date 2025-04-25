@@ -5,7 +5,7 @@ const logger = winston.createLogger({
   transports: [
     new winston.transports.Console(),
     new winston.transports.MongoDB({
-      db:'mongodb://localhost/futurex',
+      db:process.env.MONGO_URI,
       collection: 'logs',
     })
   ]
