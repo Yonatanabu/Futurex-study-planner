@@ -16,6 +16,7 @@ const validateApiKey = (req, res, next) => {
 };
 
 router.post("/chat", validateApiKey, async (req, res) => {
+  console.log(OPENROUTER_API_KEY);
   try {
     const { messages, model } = req.body;
 
