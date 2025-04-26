@@ -13,7 +13,9 @@ connectDB();  // Ensure DB is connected
 
 app.use('/api/userProfile', userRoutes);
 app.use('/api/planner', studyPlanRoutes);
-app.use('/api/quizzes', quizRoutes);
+app.use('/api/subjects', require('./routes/subject'));
+app.use('/api/quizzes', require('./routes/quizRoutes'));
+app.use('/api/questions', require('./routes/question'));
 app.use('/api/assist', aiAssist);
 
 // Start server

@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the Subject model
 const subjectSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true // ensures that 'name' field is required
-  }
+  name: { type: String, required: true },
+  grade: { type: Number, required: true, enum: [9, 10, 11, 12] },
+  chapters: [{ type: String, required: true }],
+  curriculumType: { type: String, enum: ['Semester', 'Quarter'], required: true }
 });
 
-const Subject = mongoose.model('Subject', subjectSchema);
-module.exports = Subject;
+module.exports = mongoose.model('Subject', subjectSchema);

@@ -1,19 +1,16 @@
-const mongoose=require('mongoose');
-const questionSchema =new mongoose.Schema({
-    questionText:{type:String,required:true},
-    options :{type:[String],required:true},
-    correctOptionIndex: {type:String,required:true}
+
+const mongoose = require('mongoose');
+
+const quizSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  subjectId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Subject',
+    required: true 
+  },
+  chapter: { type: String, required: true },
+  grade: { type: Number, required: true, enum: [9, 10, 11, 12] },
+  createdAt: { type: Date, default: Date.now }
 });
-const quizSchema =new mongoose.Schema({
-    title: {type:String,required:true},
-    subjectId:{type:mongoose.Schema.Types.ObjectId, 
-        ref:'Subject',
-        unique:true,
-        required: true
-    },
-    grade: { type:Number,required:true},
-    chapter: { type: String, required:true },
-    explanation:{type : String,default:""},
-    questions :{type:[questionSchema],required: true},
-}, { timestamps: true });
-module.exports =mongoose.model('Quiz',quizSchema);
+
+module.exports = mongoose.model('Quiz', quizSchema);
