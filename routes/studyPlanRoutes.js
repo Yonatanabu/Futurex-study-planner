@@ -1,14 +1,39 @@
 const express = require('express');
 const router = express.Router();
-const studyPlanController = require('../controllers/plancontroller');
+const StudyPlan = require('../models/StudyPlan');
 
-// Route to create a study plan for a specific day
-router.post('/study-plan', studyPlanController.createStudyPlan);
+// Create study plan
+router.post('/', async (req, res) => {
+  try {
+    // Set expiration date based on plan type
+    const planData = req.body;
+    if (planData.planType === 'Daily') {
+      planData.expiresAt = new Date(planData.endingDate);
+    } else if (planData.planType === 'Weekly') {
+      planData.expiresAt = new Date(planData.endingDate);
+    } else { // Monthly
+      planData.expiresAt = new Date(planData.endingDate);
+    }
 
-// Route to get the study plan for today
-router.get('/study-plan', studyPlanController.getStudyPlanForToday);
+    const plan = new StudyPlan(planData);
+    await plan.save();
+    res.status(201).send(plan);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
-// Route to update the study plan for a specific day
-router.put('/study-plan/:date', studyPlanController.updateStudyPlan);
+// Get user's active plans
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const plans = await StudyPlan.find({
+      userId: req.params.userId,
+      endingDate: { $gte: new Date() } // Only future plans
+    });
+    res.send(plans);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 module.exports = router;
