@@ -1,13 +1,12 @@
 // server.js
 const express = require('express');
-const dotenv = require('dotenv');
+require('dotenv').config();
 const connectDB = require('./config/db'); // Import MongoDB connection setup
 const userRoutes = require('./routes/userRoutes');
 const studyPlanRoutes = require('./routes/studyPlanRoutes');
 const quizRoutes=require('./routes/quizRoutes');
 const aiAssist=require('./routes/aiRoute');
 
-dotenv.config();
 const app = express();
 app.use(express.json());
 connectDB();  // Ensure DB is connected

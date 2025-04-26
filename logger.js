@@ -5,7 +5,7 @@ const logger = winston.createLogger({
   transports: [
     new winston.transports.Console(),
     new winston.transports.MongoDB({
-      db:process.env.MONGO_URI,
+      db: process.env.MONGO_URI,
       collection: 'logs',
     })
   ]
