@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
     }
 
     const plan = new StudyPlan(planData);
+    console.log("saving.....");
     await plan.save();
     res.status(201).send(plan);
   } catch (error) {
