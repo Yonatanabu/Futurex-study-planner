@@ -9,12 +9,11 @@ const aiAssist=require('./routes/aiRoute');
 
 dotenv.config();
 const app = express();
-
 app.use(express.json());
 connectDB();  // Ensure DB is connected
 
 app.use('/api/userProfile', userRoutes);
-app.use('/api', studyPlanRoutes);
+app.use('/api/planner', studyPlanRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/assist', aiAssist);
 

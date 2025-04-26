@@ -11,27 +11,27 @@ exports.onboardUser = async (req, res) => {
       curriculumType,
       avgGrade,
       rank,
-      studyDurationMin,
-      studyDurationMax,
+      studyDuration,        // Changed from studyDurationMin/Max
+      weekendStudyHours,    // New field
       preferredTimes,
-      restDaysPerWeek,
+      restDay,              // Changed from restDaysPerWeek
       wakeUpTime,
       learningStyle,
-      subjects,
       favoriteSubjects,
       improveSubjects,
-      leisureGeneral,
-      moviePrefs,
-      gamePrefs,
+      reasonForLoveOfSubject, // New field
       finalExamDate,
       dreamCareer,
       motivations,
       competeWithFriends,
+      friendInFuturex,      // New field
+      friendName,          // New field
       admiredFigure,
       admiredReason,
-      detailedActivities,
+      hobbies             
     } = req.body;
-    // Create a new user profile
+    
+    // Create a new user profile with schema-compatible fields
     const userProfile = new UserProfile({
       name,
       grade,
@@ -39,25 +39,24 @@ exports.onboardUser = async (req, res) => {
       curriculumType,
       avgGrade,
       rank,
-      studyDurationMin,
-      studyDurationMax,
+      studyDuration,        // Single duration instead of min/max
+      weekendStudyHours,    // Required by schema
       preferredTimes,
-      restDaysPerWeek,
+      restDay,              // Single day instead of days count
       wakeUpTime,
       learningStyle,
-      subjects,
       favoriteSubjects,
       improveSubjects,
-      leisureGeneral,
-      moviePrefs,
-      gamePrefs,
+      reasonForLoveOfSubject,
       finalExamDate,
       dreamCareer,
       motivations,
       competeWithFriends,
+      friendInFuturex,      
+      friendName,
       admiredFigure,
       admiredReason,
-      detailedActivities,
+      hobbies              
     });
 
     // Save the user profile to the database
